@@ -42,7 +42,7 @@ class TestOne(unittest2.TestCase):
             def __init__(self):
                 self.l = ['t', 'e', 's', 't']
 
-        d = Foo().to_dict()
+        d = Foo().to_dictionary()
         self.assertTrue('l' in d)
         self.assertTrue(isinstance(d['l'], list))
 

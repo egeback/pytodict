@@ -121,8 +121,11 @@ def _to_dict(obj, depth, custom_serializers, default=None, excluded_json_attr=li
 
     # if hasattr(obj, "__module__") and (obj.__module__ + "." + obj.__class__.__name__) in custom_serializers:
     #    return custom_serializers[obj.__module__ + "." + obj.__class__.__name__].serialize(obj)
+    if hasattr(obj, 'to_dict'):
+        return obj.to_dict(depth, custom_serializers, default=default, excluded_json_attr=excluded_json_attr,
+                              use_str_method=use_str_method, allow_no_obj=allow_no_obj)
 
-    if isinstance(obj, list):
+    elif isinstance(obj, list):
         if depth == 1 and not allow_no_obj:
             raise AttributeError("Can't covert a list to dict")
 
@@ -164,7 +167,10 @@ def _to_dict(obj, depth, custom_serializers, default=None, excluded_json_attr=li
             v = obj[k]
 
         if k not in json_attr:
-            if isinstance(v, dict):
+            if hasattr(v, 'to_dict'):
+                values[k] = v.to_dict(depth, custom_serializers, default=default, excluded_json_attr=excluded_json_attr,
+                                      use_str_method=use_str_method, allow_no_obj=allow_no_obj)
+            elif isinstance(v, dict):
                 if len(v) == 0:
                     values[k] = {}
                     continue
@@ -186,10 +192,6 @@ def _to_dict(obj, depth, custom_serializers, default=None, excluded_json_attr=li
             elif default is not None:
                 values[k] = _to_dict(default(v), depth, custom_serializers, default=default,
                                      excluded_json_attr=excluded_json_attr)
-
-            elif hasattr(v, 'to_dict'):
-                values[k] = v.to_dict(depth, custom_serializers, default=default, excluded_json_attr=excluded_json_attr,
-                                      use_str_method=use_str_method, allow_no_obj=allow_no_obj)
 
             elif hasattr(v, "__str__") and callable(getattr(v, "__str__")) and use_str_method:
                 values[k] = v.__str__()
@@ -239,7 +241,7 @@ class ModelBase(object):
         return to_json(self, default=default, custom_serializers=custom_serializers, sort_keys=sort_keys, indent=indent,
                        excluded_json_attr=excluded_json_attr, use_str_method=use_str_method)
 
-    def to_dict(self, default=None, custom_serializers=None, excluded_json_attr=list(), use_str_method=None):
+    def to_dictionary(self, default=None, custom_serializers=None, excluded_json_attr=list(), use_str_method=None):
         return to_dict(self, custom_serializers=custom_serializers, default=default,
                        excluded_json_attr=excluded_json_attr, use_str_method=use_str_method)
 
