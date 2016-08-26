@@ -150,6 +150,9 @@ def _to_dict(obj, depth, custom_serializers, default=None, excluded_json_attr=li
 
         return obj
 
+    elif obj.__class__.__name__ == "datetime":
+        return obj.__str__()
+
     if len(attributes) == 0 and default is not None:
         return _to_dict(default(obj), depth, custom_serializers, default=default,
                         excluded_json_attr=excluded_json_attr)

@@ -1,10 +1,12 @@
 import unittest2
 import sys
+import datetime
 from enum import Enum
 sys.path.insert(0, "../pytodict")  # prefer local version
 
 from pytodict.custom_serializer_base import CustomSerializerBase
 from pytodict.core import ModelBase, to_dict, to_json, add_custom_serializers, set_global_setting, ToDict, _to_dict
+
 
 
 class TestOne(unittest2.TestCase):
@@ -286,6 +288,13 @@ class TestOne(unittest2.TestCase):
         self.assertFalse("t1" in d["c2"])
         self.assertFalse("t2" in d["c2"])
         self.assertTrue(len(d["c2"]["t22"]), 2)
+
+    def test_status_msg(self):
+        status = {'date': datetime.datetime.utcnow()}
+
+        d = to_dict(status)
+        self.assertEqual(str(status['date']), str(d['date']))
+
 
 if __name__ == '__main__':
     unittest2.main()
