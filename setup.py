@@ -9,7 +9,7 @@ config = {
     'url': 'https://github.com/egeback/pytodict',
     'download_url': 'https://github.com/egeback/pytodict',
     'author_email': 'marky@egeback.se',
-    'version': '0.1',
+    'version': '0.3',
     'install_requires': ['nose2', 'unittest2'],
     'packages': ['pytodict'],
     'scripts': [],

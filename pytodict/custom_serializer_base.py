@@ -19,4 +19,7 @@ class CustomSerializerBase(metaclass=ABCMeta):
 
     @staticmethod
     def get_module_and_class_name(clazz):
-        return str(clazz)
+        if hasattr(clazz, "__module__"):
+            return clazz.__module__ + "." + clazz.__name__
+        else:
+            return clazz.__name__

@@ -7,6 +7,12 @@ settings = dict()
 settings['custom_serializers'] = dict()
 settings['allow_constants'] = False
 
+def get_module_and_class_name(clazz):
+    if hasattr(clazz, "__module__"):
+        return clazz.__module__ + "." + clazz.__name__
+    else:
+        return clazz.__name__
+
 
 def set_global_setting(setting, value):
     global settings
@@ -108,8 +114,8 @@ def _to_dict(obj, depth, custom_serializers, default=None, excluded_json_attr=li
                                       use_str_method=use_str_method, allow_no_obj=allow_no_obj)
 
     # if hasattr(obj, "__module__") and (obj.__module__ + "." + obj.__class__.__name__) in custom_serializers:
-    if hasattr(obj, "__module__") and (str(obj.__class__)) in custom_serializers:
-        return custom_serializers[str(obj.__class__)].serialize(obj)
+    if hasattr(obj, "__module__") and (get_module_and_class_name(obj.__class__)) in custom_serializers:
+        return custom_serializers[get_module_and_class_name(obj.__class__)].serialize(obj)
 
     json_attr = set()
     for clazz in type(obj).mro():
@@ -167,7 +173,10 @@ def _to_dict(obj, depth, custom_serializers, default=None, excluded_json_attr=li
             v = obj[k]
 
         if k not in json_attr:
-            if hasattr(v, 'to_dict'):
+            if hasattr(v, "__module__") and (get_module_and_class_name(v.__class__)) in custom_serializers:
+                return custom_serializers[get_module_and_class_name(v.__class__)].serialize(v)
+
+            elif hasattr(v, 'to_dict'):
                 values[k] = v.to_dict(depth, custom_serializers, default=default, excluded_json_attr=excluded_json_attr,
                                       use_str_method=use_str_method, allow_no_obj=allow_no_obj)
             elif isinstance(v, dict):
