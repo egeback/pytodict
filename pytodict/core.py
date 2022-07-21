@@ -133,7 +133,7 @@ def _to_dict(obj, depth, custom_serializers, default=None, excluded_json_attr=li
 
     elif isinstance(obj, list):
         if depth == 1 and not allow_no_obj:
-            raise AttributeError("Can't covert a list to dict")
+            raise AttributeError("Can't convert a list to dict")
 
         l = []
 
